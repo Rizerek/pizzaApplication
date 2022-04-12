@@ -1,9 +1,13 @@
 package pl.mikolaj.pokora.pizzaapplication.remote.rest.dto.response;
 
-import pl.mikolaj.pokora.pizzaapplication.remote.rest.dto.response.PizzaDto;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
+import java.util.List;
 
+@Getter
+@Setter
 public class MenuDto {
 
     private List<PizzaDto> pizzas;
@@ -12,12 +16,4 @@ public class MenuDto {
     }
 
     public MenuDto(List<PizzaDto> pizzas) { this.pizzas = pizzas; }
-
-    public List<PizzaDto> getPizzas() {
-        return pizzas;
-    }
-
-    public void setPizzas(List<PizzaDto> pizzas) {
-        this.pizzas = pizzas;
-    }
 }

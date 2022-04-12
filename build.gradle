@@ -5,19 +5,34 @@ plugins {
 }
 
 group = 'pl.mikolaj.pokora'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.2-SNAPSHOT'
 sourceCompatibility = '11'
 
 repositories {
+    mavenLocal()
     mavenCentral()
+    maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local/" }
+    maven { url "https://repo.spring.io/milestone" }
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/libs-snapshot" }
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.projectlombok:lombok:1.18.20'
+    implementation 'org.projectlombok:lombok:1.18.20'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    groupId 'org.springframework.boot'
-    artifactId 'spring-boot-starter-web'
-
+    //groupId 'org.springframework.boot'
+    //artifactId 'spring-boot-starter-web'
+    //groupId 'io.springfox'
+    //artifactId 'springfox-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    //implementation 'java:org.hibernate:hibernate-core'
+    implementation 'org.hibernate:hibernate-core:5.0.7.Final'
+    implementation 'org.springframework.boot:spring-boot-starter-parent:3.0.0-SNAPSHOT'
 }
 
 test {
