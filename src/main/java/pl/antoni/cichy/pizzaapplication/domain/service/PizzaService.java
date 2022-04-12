@@ -1,19 +1,19 @@
-package pl.mikolaj.pokora.pizzaapplication.domain.service;
+package pl.antoni.cichy.pizzaapplication.domain.service;
 
 import org.springframework.stereotype.Service;
-import pl.mikolaj.pokora.pizzaapplication.data.entity.pizza.PizzaEntity;
-import pl.mikolaj.pokora.pizzaapplication.data.entity.size.SizeEntity;
-import pl.mikolaj.pokora.pizzaapplication.data.repository.SizeRepository;
-import pl.mikolaj.pokora.pizzaapplication.domain.mapper.PizzaMapper;
-import pl.mikolaj.pokora.pizzaapplication.domain.model.SizeType;
-import pl.mikolaj.pokora.pizzaapplication.remote.rest.dto.request.AddPizzaDto;
-import pl.mikolaj.pokora.pizzaapplication.remote.rest.dto.request.AddSizeDto;
-import pl.mikolaj.pokora.pizzaapplication.remote.rest.dto.request.UpdatePizzaDto;
-import pl.mikolaj.pokora.pizzaapplication.remote.rest.dto.response.MenuDto;
-import pl.mikolaj.pokora.pizzaapplication.remote.rest.dto.response.PizzaDto;
-import pl.mikolaj.pokora.pizzaapplication.data.repository.PizzaRepository;
-import pl.mikolaj.pokora.pizzaapplication.domain.mapper.SizeMapper;
-import pl.mikolaj.pokora.pizzaapplication.remote.rest.dto.response.SizeDto;
+import pl.antoni.cichy.pizzaapplication.data.entity.pizza.PizzaEntity;
+import pl.antoni.cichy.pizzaapplication.data.entity.size.SizeEntity;
+import pl.antoni.cichy.pizzaapplication.data.repository.SizeRepository;
+import pl.antoni.cichy.pizzaapplication.domain.mapper.PizzaMapper;
+import pl.antoni.cichy.pizzaapplication.domain.model.SizeType;
+import pl.antoni.cichy.pizzaapplication.remote.rest.dto.request.AddPizzaDto;
+import pl.antoni.cichy.pizzaapplication.remote.rest.dto.request.AddSizeDto;
+import pl.antoni.cichy.pizzaapplication.remote.rest.dto.request.UpdatePizzaDto;
+import pl.antoni.cichy.pizzaapplication.remote.rest.dto.response.MenuDto;
+import pl.antoni.cichy.pizzaapplication.remote.rest.dto.response.PizzaDto;
+import pl.antoni.cichy.pizzaapplication.data.repository.PizzaRepository;
+import pl.antoni.cichy.pizzaapplication.domain.mapper.SizeMapper;
+import pl.antoni.cichy.pizzaapplication.remote.rest.dto.response.SizeDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -98,7 +98,26 @@ public class PizzaService {
     }
 
     public PizzaDto updatePizza(UpdatePizzaDto updatePizzaDto, String token, Integer pizzaId) {
-        return null;
+        checkToken(token);
+        boolean pizzaExists = pizzaRepository.existsById(pizzaId);
+        if (!pizzaExists) {
+           throw new ResourceNotFoundException("Pizza o podanym id nie istnieje");
+        }
+        PizzaEntity pizzaEntity = pizzaRepository.getById(pizzaId);
+        pizzaEntity.setName(updatePizzaDto.getName());
+        pizzaRepository.save(pizzaEntity);
+
+        sizeRepository.deleteAllByPizzaId(pizzaId);
+
+        List<AddSizeDto> addSizeDtoList = updatePizzaDto.getSizes();
+        List<SizeEntity> sizeEntities = addSizeDtoList;
+            .stream()
+            .map(addSizeDto -> sizeMapper.mapToSizeEntity(addSizeDto, pizzaId))
+            .collect(Collectors.toList());
+        sizeRepository.saveAll(sizeEntities);
+
+        return pizzaMapper.mapToPizzaDto(pizzaEntity, sizeDtoList);
+
     }
 
     PizzaDto pizzaDto = mapToPizzaDto(pizzaEntity, sizeDtoList);
@@ -110,5 +129,22 @@ public class PizzaService {
                 .stream()
                 .map(pizzaEntity -> pizzaMapper.mapToPizzaDto(pizzaEntity))
                 .collect(Collectors.toList());
+    }
+    public void deletePizza(Integer pizzaId,String token)
+    {
+        //  if(token ==null||!token.equals("xzv"))
+        //  {
+        //      throw new UnauthorizedException("Bledny token");
+        //  }
+        check(token);
+        boolean pizzaExist = pizzaRepository.existsById(pizzaId);
+        if(!pizzaExist)
+        {
+            throw new ResourceNotFoundException("Pizza o podanym id nie istnieje");
+        }
+        List<SizeDto> sizeDtoList = sizeEntities.stream()
+                .map(sizeMapper::mapToSizeDto)
+                .collect(Collectors.toList());
+        pizzaRepository.deleteById(pizzaId);
     }
 }

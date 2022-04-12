@@ -1,14 +1,14 @@
 package pl.mikolaj.pokora.pizzaapplication.data.repository;
 
-import pl.mikolaj.pokora.pizzaapplication.data.entity.pizza.PizzaEntity;
-import pl.mikolaj.pokora.pizzaapplication.data.entity.size.SizeEntity;
+import pl.antoni.cichy.pizzaapplication.data.entity.pizza.PizzaEntity;
+import pl.antoni.cichy.pizzaapplication.data.entity.size.SizeEntity;
 
 import java.util.List;
 
-public interface SizeRepository {
+public interface SizeRepository extends JpaRepository<SizeEntity,Integer>{
 
-    public default PizzaEntity saveAll(List<SizeEntity> sizeEntities) {
+    void deleteAllByPizzaId(Integer pizzaId);
 
-        return null;
-    }
+    boolean existsAllByIdIn(Set<Integer> ids)
+
 }
